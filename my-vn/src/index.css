@@ -1,0 +1,252 @@
+:root {
+  --bg: #0b0f14;
+  --fg: #e8eef7;
+  --panel: rgba(0,0,0,0.55);
+  --btn: rgba(255,255,255,0.10);
+  --btn2: rgba(255,255,255,0.16);
+}
+
+:root[data-theme="day"] {
+  --bg: #f6f7fb;
+  --fg: #0b1220;
+  --panel: rgba(255,255,255,0.72);
+  --btn: rgba(0,0,0,0.06);
+  --btn2: rgba(0,0,0,0.10);
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+}
+
+.game-root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 12px;
+}
+
+.stage {
+  flex: 1;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+}
+
+.character {
+  position: absolute;
+  left: 50%;
+  bottom: 160px;
+  transform: translateX(-50%);
+  max-width: min(72vw, 420px);
+  height: auto;
+}
+
+.fx {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+.hud {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
+  display: grid;
+  gap: 10px;
+}
+
+.dialogue {
+  background: var(--panel);
+  border-radius: 16px;
+  padding: 12px;
+  backdrop-filter: blur(8px);
+}
+
+.speaker {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.text {
+  line-height: 1.45;
+  font-size: clamp(15px, 3.6vw, 18px);
+}
+
+.next {
+  margin-top: 10px;
+  width: 100%;
+  height: 44px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--btn2);
+  color: var(--fg);
+}
+
+.choices {
+  display: grid;
+  gap: 8px;
+  grid-auto-flow: row;
+  grid-template-columns: 1fr;
+}
+
+.choice {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--btn);
+  color: var(--fg);
+  font-weight: 600;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: background 150ms ease, transform 80ms ease, box-shadow 150ms ease;
+  cursor: pointer;
+}
+
+.choice:hover {
+  background: var(--btn2);
+  transform: translateY(-1px);
+}
+
+.choice:active {
+  transform: translateY(0);
+  opacity: 0.96;
+}
+
+.choice:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.06);
+}
+
+:root[data-theme="day"] .choice:focus {
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.08);
+}
+
+/* 循环动画示例 */
+.character.float {
+  animation: float 2.8s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-8px); }
+}
+
+.character.shake {
+  animation: shake 0.2s ease-in-out infinite;
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(-50%) translateX(0); }
+  25% { transform: translateX(-50%) translateX(-1px); }
+  75% { transform: translateX(-50%) translateX(1px); }
+}
+
+/* ===== Ending Screen ===== */
+
+.ending-root {
+  min-height: 100dvh;
+  background: var(--bgColor);
+  color: #fff;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 24px 18px;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+/* 上半部分：让画框稳定待在上半屏 */
+.ending-frameWrap {
+  /* 这块决定画框在整体画面的“上半部分位置” */
+  flex: 0 0 auto;
+  margin-top: 6dvh; /* 往下留一点顶部空间 */
+  display: flex;
+  justify-content: center;
+}
+
+/* 画框本体 */
+.ending-frame {
+  width: min(86vw, 520px);
+  aspect-ratio: 16 / 10; /* 你可以改成 4/3 或 16/9 试试 */
+  background: #fff;
+
+  border-radius: 6px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+
+  overflow: hidden;
+  position: relative;
+
+  /* 如果 children 只是 img，居中显示更舒服 */
+  display: grid;
+  place-items: center;
+}
+
+/* 如果你 children 放的是 img/gif，建议配合这个 class */
+.ending-frame img,
+.ending-frame video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 你也可以用 contain 保留完整画面 */
+}
+
+/* 下半部分：文字区域 */
+.ending-text {
+  margin-top: 22px;
+  text-align: center;
+
+  /* 让文字整体在下方但不把画框挤走 */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 12px;
+}
+
+.ending-title {
+  font-size: clamp(34px, 7vw, 52px);
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.ending-desc {
+  font-size: clamp(14px, 3.8vw, 18px);
+  line-height: 1.6;
+  opacity: 0.92;
+
+  max-width: min(92vw, 560px);
+  margin: 0 auto;
+  white-space: pre-line; /* 让 \n 换行生效 */
+}
+
+.ending-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.ending-btn {
+  height: 44px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.16);
+  color: #fff;
+}
