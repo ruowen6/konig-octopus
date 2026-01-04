@@ -5,8 +5,10 @@ import beachNight from "../assets/bg/beach-night.png";
 import konigNormal from "../assets/konig/normal.png";
 import konigCry from "../assets/konig/cry.png";
 
+import normEndPic1 from "../assets/ending/normal1.png";
 import badEndPic1 from "../assets/ending/bad1.png";
 import goodEndPic1 from "../assets/ending/good1.png";
+// import type { run } from "node:test";
 
 export const story: Story = {
   start: "intro",
@@ -36,8 +38,37 @@ export const story: Story = {
         characterAnim: "float",
       },
       choices: [
-        { id: "c1", text: "吃掉他…", to: "eat" },
-        { id: "c2", text: "带他回家", to: "adopt" },
+        { id: "c1", text: "逃跑！", to: "run" },
+        { id: "c2", text: "原地不动", to: "stay" },
+      ],
+    },
+
+    run: {
+      id: "run",
+      scene: {
+        bgDay: beachDay,
+        bgNight: beachNight,
+        character: konigCry,
+        characterAnim: "none",
+      },
+      speaker: "???",
+      text: "小章鱼无声无息地望着你远去的身影。",
+      next: "normal-end-1",
+    },
+
+    stay: {
+      id: "stay",
+      scene: {
+        bgDay: beachDay,
+        bgNight: beachNight,
+        character: konigNormal,
+        characterAnim: "float",
+      },
+      speaker: "???",
+      text: "小家伙告诉你，他叫König，想要和你一起生活。你决定……",
+      choices: [
+        { id: "c3", text: "吃掉他！", to: "eat" },
+        { id: "c4", text: "带他回家", to: "adopt" },
       ],
     },
 
@@ -67,11 +98,28 @@ export const story: Story = {
       next: "good-end-1",
     },
 
+    "normal-end-1": {
+      id: "normal-end-1",
+      scene: {
+        // example: ending page background color (can be any CSS color)
+        bgColor: "#172648ff",
+      },
+      ending: {
+        title: "普通结局1",
+        description:
+          "你快速离开了这里，\n" +
+          "沙滩上只剩下你的脚印。\n" +
+          "小章鱼心里有再多的话，也无人倾听了。\n\n" +
+          "沙滩上的风依然温柔地吹拂着，沙滩永远只是一个普通的沙滩。",
+        image: normEndPic1,
+      },
+    },
+
     "bad-end-1": {
       id: "bad-end-1",
       scene: {
         // example: ending page background color (can be any CSS color)
-        bgColor: "#172448",
+        bgColor: "#2b1748ff",
       },
       ending: {
         title: "坏结局1",
@@ -82,6 +130,7 @@ export const story: Story = {
         image: badEndPic1,
       },
     },
+
     "good-end-1": {
       id: "good-end-1",
       scene: {
