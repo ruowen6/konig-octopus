@@ -15,8 +15,9 @@ export function DialogueBox({
     <div className="dialogue">
       {speaker && <div className="speaker">{speaker}</div>}
       <div className="text">{text ?? ""}</div>
+      
       {onNext && (
-        <button className="next" onClick={onNext}>
+        <button className="next btn-stamp" onClick={onNext}>
           Next
         </button>
       )}

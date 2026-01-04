@@ -2,6 +2,8 @@
 import type { Story } from "./types";
 import beachDay from "../assets/bg/beach-day.png";
 import beachNight from "../assets/bg/beach-night.png";
+
+import konigUnknown from "../assets/konig/unknown-water-in.png";
 import konigNormal from "../assets/konig/normal.png";
 import konigCry from "../assets/konig/cry.png";
 
@@ -34,12 +36,12 @@ export const story: Story = {
       scene: {
         bgDay: beachDay,
         bgNight: beachNight,
-        character: konigNormal,
-        characterAnim: "float",
+        character: konigUnknown,
+        characterAnim: "breathe",
       },
       choices: [
-        { id: "c1", text: "逃跑！", to: "run" },
-        { id: "c2", text: "原地不动", to: "stay" },
+        { id: "c1", text: "RUN", to: "run" },
+        { id: "c2", text: "STAY", to: "stay" },
       ],
     },
 
@@ -67,8 +69,8 @@ export const story: Story = {
       speaker: "???",
       text: "小家伙告诉你，他叫König，想要和你一起生活。你决定……",
       choices: [
-        { id: "c3", text: "吃掉他！", to: "eat" },
-        { id: "c4", text: "带他回家", to: "adopt" },
+        { id: "c3", text: "EAT", to: "eat" },
+        { id: "c4", text: "ADOPT", to: "adopt" },
       ],
     },
 

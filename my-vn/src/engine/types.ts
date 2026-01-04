@@ -14,7 +14,7 @@ export type Scene = {
 
   character?: string;
   fx?: string;
-  characterAnim?: "float" | "shake" | "none";
+  characterAnim?: "float" | "shake" | "none" | "breathe";
 };
 
 

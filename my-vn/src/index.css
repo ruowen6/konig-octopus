@@ -4,6 +4,7 @@
   --panel: rgba(0,0,0,0.55);
   --btn: rgba(255,255,255,0.10);
   --btn2: rgba(255,255,255,0.16);
+  --text-on-card: #1b1b1b; 
 }
 
 :root[data-theme="day"] {
@@ -44,7 +45,7 @@ html, body {
 .character {
   position: absolute;
   left: 50%;
-  bottom: 160px;
+  bottom: 50%;
   transform: translateX(-50%);
   max-width: min(72vw, 420px);
   height: auto;
@@ -69,10 +70,52 @@ html, body {
 }
 
 .dialogue {
-  background: var(--panel);
-  border-radius: 16px;
-  padding: 12px;
-  backdrop-filter: blur(8px);
+  /* khaki opaque card */
+  --dialogue-bg: #fae3a0; /* khaki-ish */
+  --dialogue-outer: #2f1a0c; /* outer border color */
+  --dialogue-inner: #e8c99a; /* inner border color */
+
+  position: relative;
+  background: var(--dialogue-bg);
+  --r: 5px;        /* 统一定义圆角 */
+  border-radius: var(--r);
+  padding: 16px;
+  box-shadow: 0 6px 24px rgba(9,10,12,0.18);
+  /* remove translucent backdrop so card is opaque */
+  backdrop-filter: none;
+  z-index: 0;
+
+  bottom: 30%;
+  color: var(--text-on-card);
+}
+
+/* double-line border using pseudo elements */
+.dialogue::before,
+.dialogue::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.dialogue::before {
+  /* outer thicker border (drawn slightly outside using negative inset) */
+  inset: -6px;
+  border-radius: calc(var(--r) + 6px);
+  border: 2px solid var(--dialogue-outer);
+  box-shadow: 0 6px 0 rgba(0,0,0,0.08) inset;
+  z-index: -2;
+}
+
+.dialogue::after {
+  /* inner thin border */
+  inset: 4px;
+  border: 2px solid var(--dialogue-inner);
+  z-index: -1;
 }
 
 .speaker {
@@ -84,7 +127,7 @@ html, body {
   line-height: 1.45;
   font-size: clamp(15px, 3.6vw, 18px);
 }
-
+/*
 .next {
   margin-top: 10px;
   width: 100%;
@@ -92,31 +135,41 @@ html, body {
   border: 0;
   border-radius: 12px;
   background: var(--btn2);
-  color: var(--fg);
+  color: var(--text-on-card);
+}
+*/
+.next { 
+  all: unset;          /* 可选：清掉原本按钮默认样式（更干净） */
+  display: block;
+  /* 在文本与按钮之间留出大约两行的垂直间距，并水平居中 */
+  margin-top: 2em;
+  margin-left: auto;
+  margin-right: auto;
+  /* 与对话框底部保持一行空白 */
+  margin-bottom: 1em;
 }
 
+
 .choices {
-  display: grid;
-  gap: 8px;
-  grid-auto-flow: row;
-  grid-template-columns: 1fr;
+  /* 居中并按行优先排列：先左后右，满一行换下一行 */
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 2em;    /* 文本下方两行空白的近似值 */
+  margin-bottom: 1em; /* 与对话框底部一行空白 */
 }
 
 .choice {
-  width: 100%;
-  height: 44px;
-  padding: 0 14px;
-  border: 0;
-  border-radius: 12px;
-  background: var(--btn);
-  color: var(--fg);
-  font-weight: 600;
-  text-align: left;
-  display: flex;
+  /* 不让单个按钮自己居中占整行；由 .choices 控制排列 */
+  all: unset;
+  display: inline-flex; /* 让按钮内部内容居中 */
   align-items: center;
-  gap: 12px;
-  transition: background 150ms ease, transform 80ms ease, box-shadow 150ms ease;
+  justify-content: center;
+  height: 56px; /* 与 .btn-stamp 一致 */
   cursor: pointer;
+  /* 保持 btn-stamp 的尺寸优先（.btn-stamp 会给出宽度），但允许在小屏幕收缩 */
+  flex: 0 1 160px;
 }
 
 .choice:hover {
@@ -154,6 +207,25 @@ html, body {
   0%, 100% { transform: translateX(-50%) translateX(0); }
   25% { transform: translateX(-50%) translateX(-1px); }
   75% { transform: translateX(-50%) translateX(1px); }
+}
+
+/* 轻微呼吸动画：素材沿中心略微放大/缩小，营造呼吸感 */
+/* 注意：此动画会调整 transform，因此应与其他会修改 transform 的类（如 .float/.shake）不要同时使用，
+   或者把它用于不同的元素层级（例如在图片外包一层 .breathe-wrapper）。*/
+.character.breathe {
+  animation: breathe 3.6s ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes breathe {
+  0% {
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  60% {
+    transform: translateX(-50%) translateY(0) scale(1.03);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
 }
 
 /* ===== Ending Screen ===== */
@@ -249,4 +321,124 @@ html, body {
   border-radius: 12px;
   background: rgba(255,255,255,0.16);
   color: #fff;
+}
+
+/* 叶子老师需要的按钮样式 */
+/* Stamp-plate button (像截图那种扁平双边框按钮) */
+.btn-stamp {
+  /* 只改这个：按钮底色 */
+  --base: #e36a3c;
+
+  /* 自动派生颜色 */
+  --outer: color-mix(in oklab, black 55%, var(--base));  /* 外框深色 */
+  --inner: color-mix(in oklab, black 35%, var(--base));  /* 内框稍浅 */
+  --text:  color-mix(in oklab, black 55%, var(--base));  /* 字色 = 外框同系 */
+
+  /* 尺寸 */
+  --r: 4px;          /* 按钮外圆角（截图没那么圆） */
+  --frame: 3px;       /* 外框粗细 */
+  --pad: 6px;        /* 内框离外框距离 */
+
+  display: grid;
+  place-items: center;
+
+  position: relative;
+  height: 56px;
+  width: 160px;
+  border: 0;
+  border-radius: var(--r);
+
+  background: var(--base);
+  color: var(--text);
+
+  /* 文字更像截图：粗、稳、略复古 */
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 800;
+  font-size: 34px;
+  letter-spacing: 1px;
+
+  cursor: pointer;
+  user-select: none;
+
+  /* 外框：用 box-shadow 画一圈更像图里的“描边” */
+  box-shadow:
+    0 0 0 var(--frame) var(--outer);
+}
+
+/* 内框 */
+.btn-stamp::before {
+  content: "";
+  position: absolute;
+  inset: var(--pad);
+  border-radius: calc(var(--r) - 2px);
+  border: 2px solid var(--inner);
+  pointer-events: none;
+}
+
+/* 轻微 hover（截图里变化很弱） */
+.btn-stamp:hover {
+  filter: brightness(1.6);
+}
+
+/* 按下去：轻微变暗/压一下（不要台阶感） */
+.btn-stamp:active {
+  filter: brightness(0.98);
+  transform: translateY(1px);
+}
+
+/* 自动为多个选项分配颜色：使用 --base 变量覆盖 .btn-stamp 的颜色来源 */
+/* 我们定义 4 色循环：1 红、2 蓝、3 绿、4 紫 */
+.choices .choice:nth-child(4n+1) { --base: #ec6735; } /* red */
+.choices .choice:nth-child(4n+2) { --base: #3b82f6; } /* blue */
+.choices .choice:nth-child(4n+3) { --base: #35ec47; } /* green */
+.choices .choice:nth-child(4n+4) { --base: #8b5cf6; } /* purple */
+
+/* 可选：为第一个按钮（主要动作）添加更明显的高亮样式 */
+.choices .choice:nth-child(1) {
+  /* 不覆盖 .btn-stamp 自己的 box-shadow（否则原始边框会消失）
+     使用 outline 来增加一个额外的强调环，这是非破坏性的 */
+  outline: 3px solid rgba(0,0,0,0.06);
+  outline-offset: 2px;
+}
+
+/* ===== Responsive adjustments ===== */
+/* 手机窄屏：每行一个按钮、减小间距与字体 */
+@media (max-width: 420px) {
+  .choices {
+    gap: 30px;
+    margin-top: 1.6em;
+    margin-bottom: 0.8em;
+  }
+
+  .choice {
+    /* 每行一个，允许按钮占满可用宽度 */
+    flex: 0 1 100%;
+    max-width: 40%;
+    height: 52px;
+  }
+
+  .btn-stamp {
+    width: 100%;
+    height: 52px;
+    font-size: 20px; /* 缩小字体，避免超出 */
+  }
+
+  .next {
+    max-width: 40%;
+    margin-top: 1.6em;
+    margin-bottom: 0.8em;
+  }
+}
+
+/* 中等屏：尽量两列排列（先左后右，满一行再换行） */
+@media (min-width: 421px) and (max-width: 760px) {
+  .choice {
+    flex: 0 1 48%; /* 两列优先 */
+    max-width: 48%;
+  }
+
+  .btn-stamp {
+    width: 100%; /* 让 btn-stamp 在两列布局中占满 choice 容器 */
+    font-size: 26px;
+  }
 }
