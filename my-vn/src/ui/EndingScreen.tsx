@@ -1,3 +1,4 @@
+// my-vn/src/ui/EndingScreen.tsx
 import React from "react";
 
 type EndingScreenProps = {

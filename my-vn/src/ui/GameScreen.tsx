@@ -6,6 +6,7 @@ import { SceneStage } from "./SceneStage";
 import { DialogueBox } from "./DialogueBox";
 import { ChoiceList } from "./ChoiceList";
 import { TopBar } from "./TopBar";
+import { NightCover } from "./NightCover";
 import { useTheme } from "../theme/ThemeProvider";
 import { EndingScreen } from "./EndingScreen"; // ✅ 加这一行
 
@@ -45,6 +46,7 @@ export function GameScreen() {
     <div className="game-root">
       <TopBar />
       <SceneStage scene={node.scene} />
+  <NightCover />
 
       <div className="hud">
         <DialogueBox

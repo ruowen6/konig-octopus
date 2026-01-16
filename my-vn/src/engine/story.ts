@@ -1,5 +1,9 @@
 // my-vn/src/engine/story.ts
 import type { Story } from "./types";
+
+import seaDay from "../assets/bg/sea-day.png";
+import seaNight from "../assets/bg/sea-night.png";
+
 import beachDay from "../assets/bg/beach-day.png";
 import beachNight from "../assets/bg/beach-night.png";
 
@@ -18,10 +22,10 @@ export const story: Story = {
     intro: {
       id: "intro",
       scene: {
-        bgDay: beachDay,
-        bgNight: beachNight,
+        bgDay: seaDay,
+        bgNight: seaNight,
         // character: konigNormal,
-        characterAnim: "float",
+        // characterAnim: "float",
       },
       speaker: "???",
       text: "沙滩上的阳光刺眼，你感觉到一阵阵炙热的海风。",
@@ -34,8 +38,8 @@ export const story: Story = {
       speaker: "你",
       text: "一只类似章鱼的生物从海里一点点向你靠近！你决定……",
       scene: {
-        bgDay: beachDay,
-        bgNight: beachNight,
+        bgDay: seaDay,
+        bgNight: seaNight,
         character: konigUnknown,
         characterAnim: "breathe",
       },

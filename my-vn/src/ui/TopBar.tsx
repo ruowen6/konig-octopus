@@ -5,7 +5,7 @@ export function TopBar() {
 
   return (
     <div className="topbar">
-      <div className="brand">My VN</div>
+      <div className="brand">Menu</div>
       <div className="theme">
         <span>{theme}</span>
         <button onClick={() => setMode("auto")} disabled={mode === "auto"}>Auto</button>

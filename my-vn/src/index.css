@@ -1,3 +1,4 @@
+/* index.css */
 :root {
   --bg: #0b0f14;
   --fg: #e8eef7;
@@ -5,6 +6,19 @@
   --btn: rgba(255,255,255,0.10);
   --btn2: rgba(255,255,255,0.16);
   --text-on-card: #1b1b1b; 
+}
+
+/* 夜间模式遮罩（覆盖画面但不阻塞交互）
+   - pointer-events: none 保证点击事件透过遮罩到下层元素
+   - HUD 的 z-index 已提高以确保按钮/对话框仍然清晰可见
+*/
+.night-cover {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: rgba(6, 10, 18, 0.25); /* 可调整透明度来控制暗度 */
+  mix-blend-mode: normal;
+  z-index: 10; /* 在 .hud (60) 之下，让 HUD 保持亮度 */
 }
 
 :root[data-theme="day"] {
@@ -45,7 +59,7 @@ html, body {
 .character {
   position: absolute;
   left: 50%;
-  bottom: 50%;
+  bottom: 60%;
   transform: translateX(-50%);
   max-width: min(72vw, 420px);
   height: auto;
@@ -63,59 +77,40 @@ html, body {
 
 .hud {
   position: fixed;
-  left: 0; right: 0; bottom: 0;
+  /* top: 50%; */
+  left: 5%; right: 5%; bottom: 15%;
   padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
-  display: grid;
+  /* 用 flex-box 垂直排列并全局居中对话框 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;    /* 横向居中 */
+  justify-content: center; /* 纵向居中 */
   gap: 10px;
+  z-index: 60; /* ensure HUD (dialogue, buttons) stays above the night cover */
 }
 
 .dialogue {
-  /* khaki opaque card */
-  --dialogue-bg: #fae3a0; /* khaki-ish */
-  --dialogue-outer: #2f1a0c; /* outer border color */
-  --dialogue-inner: #e8c99a; /* inner border color */
-
   position: relative;
-  background: var(--dialogue-bg);
-  --r: 5px;        /* 统一定义圆角 */
-  border-radius: var(--r);
   padding: 16px;
-  box-shadow: 0 6px 24px rgba(9,10,12,0.18);
-  /* remove translucent backdrop so card is opaque */
+
   backdrop-filter: none;
   z-index: 0;
 
-  bottom: 30%;
   color: var(--text-on-card);
-}
 
-/* double-line border using pseudo elements */
-.dialogue::before,
-.dialogue::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: inherit;
-  pointer-events: none;
-}
+  box-sizing: border-box;
 
-.dialogue::before {
-  /* outer thicker border (drawn slightly outside using negative inset) */
-  inset: -6px;
-  border-radius: calc(var(--r) + 6px);
-  border: 2px solid var(--dialogue-outer);
-  box-shadow: 0 6px 0 rgba(0,0,0,0.08) inset;
-  z-index: -2;
-}
+  /* 目标宽度：520px；当可用宽度小于 520px 时，使用可用宽度（左右各留 16px 内边距） */
+  width: min(520px, calc(100% - 32px));
 
-.dialogue::after {
-  /* inner thin border */
-  inset: 4px;
-  border: 2px solid var(--dialogue-inner);
-  z-index: -1;
+  /* 也可以额外限制最大宽度为视口百分比（两者任选），例如： */
+  max-width: 92vw;
+
+
+
+  /* 内边距响应式：在小屏缩小，在大屏放大 */
+  padding: clamp(12px, 3.5vw, 24px);
+
 }
 
 .speaker {
@@ -166,7 +161,6 @@ html, body {
   display: inline-flex; /* 让按钮内部内容居中 */
   align-items: center;
   justify-content: center;
-  height: 56px; /* 与 .btn-stamp 一致 */
   cursor: pointer;
   /* 保持 btn-stamp 的尺寸优先（.btn-stamp 会给出宽度），但允许在小屏幕收缩 */
   flex: 0 1 160px;
@@ -228,7 +222,7 @@ html, body {
   }
 }
 
-/* ===== Ending Screen ===== */
+/* ===== Ending Screen (new layout) ===== */
 
 .ending-root {
   min-height: 100dvh;
@@ -243,46 +237,50 @@ html, body {
   box-sizing: border-box;
 }
 
-/* 上半部分：让画框稳定待在上半屏 */
-.ending-frameWrap {
-  /* 这块决定画框在整体画面的“上半部分位置” */
-  flex: 0 0 auto;
-  margin-top: 6dvh; /* 往下留一点顶部空间 */
-  display: flex;
-  justify-content: center;
+
+/* 上半部分：给画框一个“固定区域”，不会被文字挤走 */
+.ending-frameArea {
+  flex: 0 0 48vh;          /* 保留你要求的高度占位 */
+  display: flex;           /* 开启 flex 布局 */
+  align-items: center;     /* 垂直居中 */
+  justify-content: center; /* 水平居中 */
+  width: 100%;             /* 确保占满宽度 */
+  margin-top: 3dvh;        /* 顶部间距 */
+  position: relative;
 }
 
-/* 画框本体 */
-.ending-frame {
-  width: min(86vw, 520px);
-  aspect-ratio: 16 / 10; /* 你可以改成 4/3 或 16/9 试试 */
-  background: #fff;
 
+.ending-frame {
+  /* 移除原本的 Anchor 层，直接设置画框 */
+  width: min(520px, 86vw);
+  aspect-ratio: 16 / 10;
+
+  background: #fff;
   border-radius: 6px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-
   overflow: hidden;
-  position: relative;
 
-  /* 如果 children 只是 img，居中显示更舒服 */
   display: grid;
   place-items: center;
+  
+  /* 确保它在 Flex 容器中保持设定尺寸 */
+  flex-shrink: 0; 
 }
 
-/* 如果你 children 放的是 img/gif，建议配合这个 class */
+
+/* 默认让媒体铺满画框 */
 .ending-frame img,
 .ending-frame video {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* 你也可以用 contain 保留完整画面 */
+  object-fit: cover; /* 想完整显示就改成 contain */
 }
 
-/* 下半部分：文字区域 */
+/* 下半部分：文字区域（保留你原来的逻辑） */
 .ending-text {
   margin-top: 22px;
   text-align: center;
 
-  /* 让文字整体在下方但不把画框挤走 */
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -303,7 +301,7 @@ html, body {
 
   max-width: min(92vw, 560px);
   margin: 0 auto;
-  white-space: pre-line; /* 让 \n 换行生效 */
+  white-space: pre-line;
 }
 
 .ending-actions {
@@ -322,6 +320,20 @@ html, body {
   background: rgba(255,255,255,0.16);
   color: #fff;
 }
+
+/* EndingScreen.tsx 实际用的是 ending-frameWrap */
+.ending-frameWrap {
+  flex: 0 0 48vh;          /* 上半屏固定占位 */
+  position: relative;
+
+  /* 如果你想按“画面整体”居中 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-top: 3dvh;
+}
+
 
 /* 叶子老师需要的按钮样式 */
 /* Stamp-plate button (像截图那种扁平双边框按钮) */
@@ -350,7 +362,11 @@ html, body {
 
   background: var(--base);
   color: var(--text);
-
+  box-sizing: border-box;
+  /* 宽度行为：在大屏保持不超过 160px（不被放大），当视口比这个小时才收缩 */
+  max-width: 160px;
+  margin-left: auto;
+  margin-right: auto;
   /* 文字更像截图：粗、稳、略复古 */
   font-family: Georgia, "Times New Roman", serif;
   font-weight: 800;
@@ -390,7 +406,7 @@ html, body {
 /* 我们定义 4 色循环：1 红、2 蓝、3 绿、4 紫 */
 .choices .choice:nth-child(4n+1) { --base: #ec6735; } /* red */
 .choices .choice:nth-child(4n+2) { --base: #3b82f6; } /* blue */
-.choices .choice:nth-child(4n+3) { --base: #35ec47; } /* green */
+.choices .choice:nth-child(4n+3) { --base: #58c163; } /* green */
 .choices .choice:nth-child(4n+4) { --base: #8b5cf6; } /* purple */
 
 /* 可选：为第一个按钮（主要动作）添加更明显的高亮样式 */
@@ -432,9 +448,16 @@ html, body {
 
 /* 中等屏：尽量两列排列（先左后右，满一行再换行） */
 @media (min-width: 421px) and (max-width: 760px) {
+  .dialogue { 
+    min-height: 190px; /* 你可以试 170/190/210 */ 
+    display: flex; 
+    flex-direction: column; }
+  
   .choice {
-    flex: 0 1 48%; /* 两列优先 */
-    max-width: 48%;
+    /* 每行一个，允许按钮占满可用宽度 */
+    flex: 0 1 100%;
+    max-width: 40%;
+    height: 52px;
   }
 
   .btn-stamp {
